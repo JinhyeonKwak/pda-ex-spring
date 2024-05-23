@@ -4,8 +4,8 @@ import java.util.regex.Pattern;
 
 public class Validator {
 
-    public static boolean isNumber(int num) {
-        return Pattern.matches("^[0-9]*$", Integer.toString(num));
+    public static boolean isNumber(long num) {
+        return Pattern.matches("^[0-9]*$", Long.toString(num));
     }
 
     public static boolean isAlpha(String str) {

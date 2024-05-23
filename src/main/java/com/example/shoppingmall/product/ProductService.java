@@ -1,39 +1,40 @@
 package com.example.shoppingmall.product;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor // 필드로 생성자 코드 구현
+@RequiredArgsConstructor
 public class ProductService {
-    ProductRepository productRepository;
+
+    private final ProductJpaRepository productRepository;
 
     public Product registerProduct(Product product) {
-        System.out.println(
-                "/products : service - " + product.getName());
-
         return productRepository.save(product);
     }
 
-    public Product findProduct(int id) {
-        return productRepository.findProduct(id);
+    public Product findProduct(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
     }
 
-    public List<Product> findProducts(int limit, int currentPage) {
-        return productRepository.findProducts(limit, currentPage);
+    public Slice<Product> findProducts(int limit, int currentPage) {
+        return productRepository.findAll(PageRequest.of(currentPage, limit));
     }
 
-    public List<Product> findProducts(int limit, int currentPage, int categoryId) {
-        return productRepository.findProducts(limit, currentPage, categoryId);
+    public Slice<Product> findProducts(int limit, int currentPage, int categoryId) {
+        return productRepository.findProductsByCategoryId(categoryId, PageRequest.of(currentPage, limit));
     }
 
-    public void deleteProduct(int id) {
-        productRepository.deleteProduct(id);
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 
-    public void deleteProducts(List<Integer> productIds) {
-        productRepository.deleteProducts(productIds);
+    public void deleteProducts(List<Long> productIds) {
+        productRepository.deleteAllById(productIds);
     }
 }
