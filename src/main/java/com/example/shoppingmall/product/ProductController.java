@@ -1,6 +1,7 @@
 package com.example.shoppingmall.product;
 
 import com.example.shoppingmall.utils.Validator;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
@@ -20,13 +21,13 @@ public class ProductController {
 
     // 상품 개별 등록
     @PostMapping("/products")
-    public ResponseEntity<?> registerProduct(@RequestBody Product product) {
+    public ResponseEntity<?> registerProduct(@RequestBody @Valid RegisterProductDto dto) {
 
-        if (Validator.isAlpha(product.getName()) &&
-                Validator.isNumber(product.getPrice())) {
-            log.info(product.getName());
+        if (Validator.isAlpha(dto.getName()) &&
+                Validator.isNumber(dto.getPrice())) {
+            log.info(dto.getName());
 
-            Product savedProduct = productService.registerProduct(product);
+            Product savedProduct = productService.registerProduct(dto.toEntity());
 
             try {
                 log.info(savedProduct.getName());
@@ -59,9 +60,9 @@ public class ProductController {
     // 상품 전체, 카테고리별 조회
     @GetMapping("/products")
     public ResponseEntity<Slice<Product>> findProducts(
-            @RequestParam("limit") int limit,
-            @RequestParam("currentPage") int currentPage,
-            @RequestParam(value = "categoryId", required = false) Integer categoryId
+            @RequestParam int limit,
+            @RequestParam int currentPage,
+            @RequestParam(required = false) Integer categoryId
     ) {
         log.info("limit = {}", limit);
         log.info("currentPage = {}", currentPage);
